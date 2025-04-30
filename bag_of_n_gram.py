@@ -32,7 +32,7 @@ with open('bag_of_n.txt', 'w') as o:
 			for word in words:
 				if any(word.find(s) != -1 for s in ["$", ".com", "https://"]):
 					continue
-				clean_word = word.strip(',."\'();:*?!<>')
+				clean_word = word.strip(',."\'();:*?!<>').rstrip('-')
 				if any(c.isalpha() for c in word):
 					words_count[clean_word] = words_count.get(clean_word, 0) + 1
 
