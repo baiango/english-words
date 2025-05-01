@@ -37,9 +37,8 @@ def split_sentences(file_names):
 			for word in words:
 				if any(word.find(s) != -1 for s in ["$", ".com", "https://"]):
 					continue
-				clean_word = word.strip(',."\'();:*?!<>').rstrip('-')
 				if any(c.isalpha() for c in word):
-					yield clean_word
+					yield word
 
 def save_n_gram(words_count, file_name):
 	# Sort words_count by values (word counts) in descending order
@@ -61,7 +60,8 @@ words_counts = []
 
 words_count = {}
 for w in saved_words:
-	words_count[w] = words_count.get(w, 0) + 1
+	clean_word = w.strip(',."\'();:*?!<>').rstrip('-')
+	words_count[clean_word] = words_count.get(clean_word, 0) + 1
 words_counts.append(words_count)
 
 for n in range(2, 5):
