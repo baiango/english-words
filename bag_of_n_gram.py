@@ -23,9 +23,14 @@ file_names = [
 	"work",
 ]
 
-with open('bag_of_n.txt', 'w') as o:
-	words_count = {}
+save_names = [
+	"unigram",
+	"bigram",
+	"trigram",
+	"four_gram",
+]
 
+def split_sentences(file_names):
 	for n in file_names:
 		with open(n + '.txt', 'r') as f:
 			words = f.read().split()
@@ -34,8 +39,9 @@ with open('bag_of_n.txt', 'w') as o:
 					continue
 				clean_word = word.strip(',."\'();:*?!<>').rstrip('-')
 				if any(c.isalpha() for c in word):
-					words_count[clean_word] = words_count.get(clean_word, 0) + 1
+					yield clean_word
 
+def save_n_gram(words_count, file_name):
 	# Sort words_count by values (word counts) in descending order
 	sorted_words_count = sorted(words_count.items(), key=lambda x: x[1], reverse=True)
 
@@ -46,5 +52,24 @@ with open('bag_of_n.txt', 'w') as o:
 		and c > 1
 	]
 
-	for w in filtered_words_count:
-		o.write(str(w) + "\n")
+	with open(file_name + '.txt', 'w') as o:
+		for w in filtered_words_count:
+			o.write(str(w) + "\n")
+
+saved_words = list(split_sentences(file_names))
+words_counts = []
+
+words_count = {}
+for w in saved_words:
+	words_count[w] = words_count.get(w, 0) + 1
+words_counts.append(words_count)
+
+for n in range(2, 5):
+	words_count = {}
+	for i in range(len(saved_words) - n + 1):
+		n_gram = tuple(saved_words[i:i+n])
+		words_count[n_gram] = words_count.get(n_gram, 0) + 1
+	words_counts.append(words_count)
+
+for i, wc in enumerate(words_counts):
+	save_n_gram(wc, save_names[i])
